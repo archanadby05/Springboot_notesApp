@@ -26,4 +26,22 @@ public class NoteService {
     public Optional<Note> getById(Long id){
         return notes.stream().filter(note -> note.getId().equals(id)).findFirst();
     }
+
+    public Optional<Note> patch(Long id, Note updates){
+        return getById(id).map(existing -> {
+            if(updates.getTitle() != null){
+                existing.setTitle(updates.getTitle());
+            }
+            if(updates.getContent() != null){
+                existing.setContent(updates.getContent());
+            }
+
+            return existing;
+        });
+    }
+
+    public boolean deleteById(Long id){
+        return notes.removeIf(note -> note.getId().equals(id));
+    }
+
 }

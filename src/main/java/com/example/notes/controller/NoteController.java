@@ -3,11 +3,15 @@ package com.example.notes.controller;
 import java.util.List;
 import com.example.notes.model.Note;
 import com.example.notes.service.NoteService;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.HttpStatus;
 
 @RestController
 public class NoteController {
@@ -28,7 +32,20 @@ public class NoteController {
     }
 
     @GetMapping("/notes/{id}")
-    public Note getNoteById(@PathVariable Long id){
-        return noteService.getById(id).orElseThrow(() -> new RuntimeException("Note Not Found"));
+    public Note getNoteById(@PathVariable Long id) {
+        return noteService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Note with id " + id + " not found"));
+    }
+
+    @PatchMapping("/notes/{id}")
+    public Note patchNote(@PathVariable Long id, @RequestBody Note note){
+        return noteService.patch(id, note).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
+    }
+
+    @DeleteMapping("/notes/{id}")
+    public void deleteNote(@PathVariable Long id){
+        boolean deleted = noteService.deleteById(id);
+        if(!deleted){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found");
+        }
     }
 }

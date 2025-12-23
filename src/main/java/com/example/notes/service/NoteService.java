@@ -3,6 +3,8 @@ package com.example.notes.service;
 import com.example.notes.model.Note;
 import org.springframework.stereotype.Service;
 import com.example.notes.repository.NoteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,10 @@ public class NoteService {
 
     public List<Note> getAll(){
         return noteRepository.findAll();
+    }
+
+    public Page<Note> getAll(Pageable pageable){
+        return noteRepository.findAll(pageable);
     }
 
     public Optional<Note> getById(Long id){
@@ -45,7 +51,7 @@ public class NoteService {
         if(!noteRepository.existsById(id)){
             return false;
         }
-        
+
         noteRepository.deleteById(id);
         return true;
     }

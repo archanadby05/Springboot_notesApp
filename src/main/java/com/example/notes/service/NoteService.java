@@ -2,46 +2,52 @@ package com.example.notes.service;
 
 import com.example.notes.model.Note;
 import org.springframework.stereotype.Service;
+import com.example.notes.repository.NoteRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class NoteService {
-    private final List<Note> notes = new ArrayList<>();
-    private long nextId = 0;
+    private final NoteRepository noteRepository;
+
+    public NoteService(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
 
     public Note create(Note note){
-        note.setId(++nextId);
-        notes.add(note);
-
-        return note;
+        return noteRepository.save(note);
     }
 
     public List<Note> getAll(){
-        return notes;
+        return noteRepository.findAll();
     }
 
     public Optional<Note> getById(Long id){
-        return notes.stream().filter(note -> note.getId().equals(id)).findFirst();
+        return noteRepository.findById(id);
     }
 
     public Optional<Note> patch(Long id, Note updates){
-        return getById(id).map(existing -> {
+        return noteRepository.findById(id).map(existing -> {
             if(updates.getTitle() != null){
                 existing.setTitle(updates.getTitle());
             }
+
             if(updates.getContent() != null){
                 existing.setContent(updates.getContent());
             }
 
-            return existing;
+            return noteRepository.save(existing);
         });
     }
 
     public boolean deleteById(Long id){
-        return notes.removeIf(note -> note.getId().equals(id));
+        if(!noteRepository.existsById(id)){
+            return false;
+        }
+        
+        noteRepository.deleteById(id);
+        return true;
     }
 
 }

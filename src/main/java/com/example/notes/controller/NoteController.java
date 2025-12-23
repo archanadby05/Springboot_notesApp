@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 @RestController
 public class NoteController {
@@ -28,8 +31,8 @@ public class NoteController {
     }
 
     @GetMapping("/notes")
-    public List<Note> getAllNotes(){
-        return noteService.getAll();
+    public Page<Note> getAllNotes(@PageableDefault(size = 10, sort = "id") Pageable pageable){
+        return noteService.getAll(pageable);
     }
 
     @GetMapping("/notes/{id}")

@@ -3,6 +3,7 @@ package com.example.notes.controller;
 import java.util.List;
 import com.example.notes.model.Note;
 import com.example.notes.service.NoteService;
+import com.example.notes.exception.NoteNotFoundException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,19 +34,19 @@ public class NoteController {
 
     @GetMapping("/notes/{id}")
     public Note getNoteById(@PathVariable Long id) {
-        return noteService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Note with id " + id + " not found"));
+        return noteService.getById(id).orElseThrow(() -> new NoteNotFoundException(id));
     }
 
     @PatchMapping("/notes/{id}")
     public Note patchNote(@PathVariable Long id, @RequestBody Note note){
-        return noteService.patch(id, note).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
+        return noteService.patch(id, note).orElseThrow(() -> new NoteNotFoundException(id));
     }
 
     @DeleteMapping("/notes/{id}")
     public void deleteNote(@PathVariable Long id){
         boolean deleted = noteService.deleteById(id);
         if(!deleted){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found");
+            throw new NoteNotFoundException(id);
         }
     }
 }

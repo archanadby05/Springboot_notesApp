@@ -1,10 +1,12 @@
     package com.example.notes.service;
 
     import com.example.notes.model.Note;
+    import com.example.notes.specification.NoteSpecifications;
     import org.springframework.stereotype.Service;
     import com.example.notes.repository.NoteRepository;
     import org.springframework.data.domain.Page;
     import org.springframework.data.domain.Pageable;
+    import org.springframework.data.jpa.domain.Specification;
 
     import java.util.List;
     import java.util.Optional;
@@ -25,12 +27,19 @@
             return noteRepository.findAll();
         }
 
-        public Page<Note> getAll(String title, Pageable pageable){
+        public Page<Note> getAll(String title, String content, Pageable pageable){
+
+            Specification<Note> spec = Specification.unrestricted();
+
             if(title != null && !(title.isBlank())){
-                return noteRepository.findByTitleContainingIgnoreCase(title, pageable);
+                spec = spec.and(NoteSpecifications.titleContains(title));
+            }
+
+            if(content != null && !(content.isBlank())){
+                spec = spec.and(NoteSpecifications.contentContains(content));
             }
             
-            return noteRepository.findAll(pageable);
+            return noteRepository.findAll(spec, pageable);
         }
 
         public Optional<Note> getById(Long id){

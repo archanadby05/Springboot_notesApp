@@ -30,8 +30,11 @@ public class NoteController {
     }
 
     @GetMapping("/notes")
-    public PageResponse<Note> getAllNotes(@RequestParam(required = false) String title, @PageableDefault(size = 10, sort = "id") Pageable pageable){
-        Page<Note> page = noteService.getAll(title, pageable);
+    public PageResponse<Note> getAllNotes(@RequestParam(required = false) String title, 
+                                        @RequestParam(required = false) String content, 
+                                        @PageableDefault(size = 10, sort = "id") Pageable pageable){
+        
+        Page<Note> page = noteService.getAll(title, content, pageable);
 
         return new PageResponse<>(
             page.getContent(),

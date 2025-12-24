@@ -4,6 +4,8 @@ import com.example.notes.model.Note;
 import com.example.notes.service.NoteService;
 import com.example.notes.dto.PageResponse;
 import com.example.notes.exception.NoteNotFoundException;
+import com.example.notes.dto.CreateNoteRequest;
+import com.example.notes.dto.UpdateNoteRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import jakarta.validation.Valid;
 
 @RestController
 public class NoteController {
@@ -25,7 +28,12 @@ public class NoteController {
     }
 
     @PostMapping("/notes")
-    public Note createNote(@RequestBody Note note){
+    public Note createNote(@Valid @RequestBody CreateNoteRequest request){
+        Note note = new Note();
+        
+        note.setTitle(request.getTitle());
+        note.setContent(request.getContent());
+
         return noteService.create(note);
     }
 
@@ -51,8 +59,8 @@ public class NoteController {
     }
 
     @PatchMapping("/notes/{id}")
-    public Note patchNote(@PathVariable Long id, @RequestBody Note note){
-        return noteService.patch(id, note).orElseThrow(() -> new NoteNotFoundException(id));
+    public Note patchNote(@PathVariable Long id, @Valid @RequestBody UpdateNoteRequest request){
+        return noteService.patch(id, request).orElseThrow(() -> new NoteNotFoundException(id));
     }
 
     @DeleteMapping("/notes/{id}")

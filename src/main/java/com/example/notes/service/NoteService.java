@@ -2,11 +2,12 @@
 
     import com.example.notes.model.Note;
     import com.example.notes.specification.NoteSpecifications;
-    import org.springframework.stereotype.Service;
     import com.example.notes.repository.NoteRepository;
+    import com.example.notes.dto.UpdateNoteRequest;
     import org.springframework.data.domain.Page;
     import org.springframework.data.domain.Pageable;
     import org.springframework.data.jpa.domain.Specification;
+    import org.springframework.stereotype.Service;
 
     import java.util.List;
     import java.util.Optional;
@@ -46,7 +47,7 @@
             return noteRepository.findById(id);
         }
 
-        public Optional<Note> patch(Long id, Note updates){
+        public Optional<Note> patch(Long id, UpdateNoteRequest updates){
             return noteRepository.findById(id).map(existing -> {
                 if(updates.getTitle() != null){
                     existing.setTitle(updates.getTitle());

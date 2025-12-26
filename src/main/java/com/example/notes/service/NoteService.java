@@ -8,6 +8,7 @@
     import org.springframework.data.domain.Pageable;
     import org.springframework.data.jpa.domain.Specification;
     import org.springframework.stereotype.Service;
+    import org.springframework.transaction.annotation.Transactional;
 
     import java.util.List;
     import java.util.Optional;
@@ -20,14 +21,17 @@
             this.noteRepository = noteRepository;
         }
 
+        @Transactional
         public Note create(Note note){
             return noteRepository.save(note);
         }
 
+        @Transactional(readOnly = true)
         public List<Note> getAll(){
             return noteRepository.findAll();
         }
 
+        @Transactional(readOnly = true)
         public Page<Note> getAll(String title, String content, Pageable pageable){
 
             Specification<Note> spec = Specification.unrestricted();
@@ -47,6 +51,7 @@
             return noteRepository.findById(id);
         }
 
+        @Transactional
         public Optional<Note> patch(Long id, UpdateNoteRequest updates){
             return noteRepository.findById(id).map(existing -> {
                 if(updates.getTitle() != null){
@@ -61,6 +66,7 @@
             });
         }
 
+        @Transactional
         public boolean deleteById(Long id){
             if(!noteRepository.existsById(id)){
                 return false;
